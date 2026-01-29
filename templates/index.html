@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EasySwap</title>
+    <style>
+        body { font-family: Arial; text-align: center; background:#111; color:white; }
+        button { padding:15px 30px; font-size:18px; margin:10px; border-radius:10px; }
+        #tapBtn { background:orange; border:none; }
+        .upgradeBtn { background:green; color:white; margin:5px; }
+        .referralBtn { background:blue; color:white; margin:5px; }
+        .taskBtn { background:#f39c12; color:white; margin:5px; }
+    </style>
+</head>
+<body>
+    <h1>💰 Coins: <span id="coins">0</span></h1>
+    <h3>⚡ Energy: <span id="energy">0</span></h3>
+    <h3>⚡ Tap Power: <span id="tap_power">1</span></h3>
+
+    <button id="tapBtn">TAP</button><br>
+    <button onclick="claimBonus()">🎁 Daily Bonus</button><br>
+    <button class="upgradeBtn" onclick="upgrade('tap_power')">Upgrade Tap Power (-50 coins)</button>
+    <button class="upgradeBtn" onclick="upgrade('max_energy')">Upgrade Max Energy (-50 coins)</button>
+    <button class="referralBtn" onclick="applyReferral()">Apply Referral</button>
+
+    <h2>Social Tasks</h2>
+    <button class="taskBtn" onclick="completeTask('youtube_subscribe')">Subscribe to YouTube ✅</button>
+    <button class="taskBtn" onclick="completeTask('join_group_1')">Join Group 1 ✅</button>
+    <button class="taskBtn" onclick="completeTask('join_group_2')">Join Group 2 ✅</button>
+
+<script>
+function loadUser(){
+    fetch('/api/user').then(res=>res.json()).then(data=>{
+        document.getElementById('coins').innerText=data.coins;
+        document.getElementById('energy').innerText=data.energy+"/"+data.max_energy;
+        document.getElementById('tap_power').innerText=data.tap_power;
+    });
+}
+
+document.getElementById('tapBtn').onclick=function(){
+    fetch('/api/tap',{method:'POST'}).then(res=>res.json()).then(data=>{
+        document.getElementById('coins').innerText=data.coins;
+        document.getElementById('energy').innerText=data.energy;
+    });
+};
+
+function claimBonus(){
+    fetch('/api/daily_bonus',{method:'POST'}).then(res=>res.json()).then(data=>alert(data.message));
+}
+
+function upgrade(type){
+    fetch('/api/upgrade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type})})
+    .then(res=>res.json()).then(data=>{alert(data.message); loadUser();});
+}
+
+function applyReferral(){
+    let code = prompt("Enter referral code:");
+    fetch('/api/referral',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({referred_by:code})})
+    .then(res=>res.json()).then(data=>{alert(data.message); loadUser();});
+}
+
+function completeTask(task){
+    fetch('/api/task_complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:task})})
+    .then(res=>res.json()).then(data=>{alert(data.message); loadUser();});
+}
+
+loadUser();
+</script>
+</body>
+</html>
