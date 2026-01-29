@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppI
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 BOT_TOKEN = "7851734819:AAFvcCDz25Gkkg86V6GRqvnSj7DpsUN6t8U"
-WEB_APP_URL = "https://your-deployed-site.com"  # Deploy URL
+WEB_APP_URL = "https://easyswap-v3.onrender.com"  # Deploy URL
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[InlineKeyboardButton("🚀 Open EasySwap Game", web_app=WebAppInfo(url=WEB_APP_URL))]]
